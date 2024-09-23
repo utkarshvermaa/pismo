@@ -1,0 +1,4 @@
+data/mysql/*
+txn-routine
+__debug_bin*
+.vscode

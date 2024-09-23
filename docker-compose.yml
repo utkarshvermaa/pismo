@@ -1,0 +1,33 @@
+version: '3.3'
+services:
+  app:
+    environment:
+      - SQL_DRIVER=mysql
+      - SQL_DATA_SRC=root:root@tcp(db:3306)/pismo
+      - APP_PORT=8080
+      - MIGRATION_SRC=file:///app/migrations/up
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    container_name: app
+  db:
+    image: amd64/mysql
+    environment:
+      MYSQL_DATABASE: pismo
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    container_name: db
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-uroot", "-proot"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
+
